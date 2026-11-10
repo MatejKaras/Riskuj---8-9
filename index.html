@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RISKUJ! (The Jeopardy Board) – 8. a 9. třída ZŠ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #060b26;
+      --bg-studio: radial-gradient(circle at 50% 15%, #1d3587 0%, #0a1342 60%, #05081c 100%);
+      --card-blue: linear-gradient(145deg, #1e40af 0%, #172554 100%);
+      --card-blue-hover: linear-gradient(145deg, #2563eb 0%, #1e3a8a 100%);
+      --gold-light: #fef08a;
+      --gold: #facc15;
+      --gold-dark: #ca8a04;
+      --gold-grad: linear-gradient(135deg, #fde047 0%, #eab308 50%, #ca8a04 100%);
+      --green: #22c55e;
+      --green-dark: #15803d;
+      --red: #ef4444;
+      --red-dark: #b91c1c;
+      --orange: #f97316;
+      --purple: #a855f7;
+      --text-white: #f8fafc;
+      --text-muted: #94a3b8;
+      --shadow-gold: 0 0 20px rgba(250, 204, 21, 0.45);
+      --shadow-box: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      min-height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--bg-studio);
+      background-attachment: fixed;
+      color: var(--text-white);
+      font-family: 'Nunito', sans-serif;
+      padding-bottom: 80px;
+      scroll-behavior: smooth;
+    }
+
+    h1, h2, h3, .tv-font {
+      font-family: 'Fredoka', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    /* HORNÍ NAVIGAČNÍ LIŠTA STUDIA */
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 24px;
+      background: rgba(5, 8, 28, 0.88);
+      border-bottom: 3px solid var(--gold);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      background: var(--gold-grad);
+      color: #05081c;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+      padding: 6px 16px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-gold);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .logo-sub {
+      font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+      color: var(--gold-light);
+      font-weight: 700;
+    }
+
+    .top-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    .btn-outline {
+      background: rgba(30, 58, 138, 0.6);
+      border: 2px solid var(--gold);
+      color: var(--gold-light);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      border: 2px solid #fca5a5;
+    }
+
+    .btn-gold {
+      background: var(--gold-grad);
+      color: #060b26;
+      border: 2px solid #fef08a;
+      box-shadow: var(--shadow-gold);
+    }
+
+    .btn-green {
+      background: linear-gradient(135deg, #22c55e, #15803d);
+      border: 2px solid #86efac;
+    }
+
+    .btn-blue {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border: 2px solid #93c5fd;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 20px 20px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ==========================================
+       FÁZE 1: ÚVODNÍ LOBBY
+       ========================================== */
+    .lobby-card {
+      background: rgba(15, 23, 62, 0.9);
+      border: 3px solid var(--gold);
+      border-radius: 24px;
+      padding: clamp(20px, 3.5vw, 40px);
+      box-shadow: var(--shadow-box), var(--shadow-gold);
+      max-width: 980px;
+      margin: 15px auto;
+    }
+
+    .lobby-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .lobby-title {
+      font-size: clamp(2rem, 4.5vw, 3.4rem);
+      color: var(--gold);
+      text-shadow: 0 4px 15px rgba(250, 204, 21, 0.5);
+      margin-bottom: 8px;
+    }
+
+    .lobby-subtitle {
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+      color: #cbd5e1;
+    }
+
+    .lobby-section {
+      background: rgba(6, 11, 38, 0.65);
+      border: 2px solid rgba(250, 204, 21, 0.35);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .lobby-section-title {
+      font-size: 1.3rem;
+      color: var(--gold-light);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .preset-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .teams-inputs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .team-input-wrap {
+      display: flex;
+      align-items: center;
+      background: rgba(30, 58, 138, 0.5);
+      border: 2px solid #3b82f6;
+      border-radius: 12px;
+      padding: 8px 12px;
+      gap: 8px;
+    }
+
+    .team-input-wrap:focus-within {
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.4);
+    }
+
+    .team-badge-num {
+      background: var(--gold);
+      color: #060b26;
+      font-weight: 900;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .team-input {
+      background: transparent;
+      border: none;
+      color: white;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      width: 100%;
+      outline: none;
+    }
+
+    .remove-team-btn {
+      background: rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+      border: 1px solid #ef4444;
+      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .remove-team-btn:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    .timer-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .timer-option-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px 16px;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      background: rgba(30, 58, 138, 0.45);
+      border: 2px solid #3b82f6;
+      color: white;
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.2s;
+    }
+
+    .timer-option-btn.active {
+      background: var(--gold-grad);
+      color: #060b26;
+      border-color: #fef08a;
+      box-shadow: var(--shadow-gold);
+      transform: scale(1.03);
+    }
+
+    .rules-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .rules-list li {
+      background: rgba(30, 58, 138, 0.35);
+      border-left: 4px solid var(--gold);
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .start-studio-btn {
+      width: 100%;
+      padding: 20px;
+      font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+      font-family: 'Fredoka', sans-serif;
+      border-radius: 18px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      animation: pulseGlow 2s infinite;
+      margin-top: 10px;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(250, 204, 21, 0.5); transform: scale(1); }
+      50% { box-shadow: 0 0 38px rgba(250, 204, 21, 0.9); transform: scale(1.015); }
+    }
+
+    /* ==========================================
+       FÁZE 2: SKÓRE BOARD & JEOPARDY TABULE 5x5
+       ========================================== */
+    .scoreboard-wrap {
+      margin-bottom: 24px;
+    }
+
+    .scoreboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .team-card {
+      background: rgba(15, 23, 62, 0.9);
+      border: 3px solid #3b82f6;
+      border-radius: 18px;
+      padding: 14px 16px;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      box-shadow: var(--shadow-box);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .team-card:hover {
+      border-color: #93c5fd;
+      transform: translateY(-2px);
+    }
+
+    .team-card.active-turn {
+      background: linear-gradient(145deg, #1e3a8a 0%, #0f172a 100%);
+      border: 4px solid var(--gold);
+      box-shadow: 0 0 28px rgba(250, 204, 21, 0.65);
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .turn-indicator {
+      background: var(--gold-grad);
+      color: #060b26;
+      font-weight: 900;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      animation: bounceMini 1.5s infinite;
+    }
+
+    .turn-indicator.inactive {
+      background: rgba(255,255,255,0.08);
+      color: var(--text-muted);
+      animation: none;
+      box-shadow: none;
+    }
+
+    @keyframes bounceMini {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    .team-name {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+      color: white;
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
+
+    .team-score {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      color: var(--gold);
+      text-shadow: 0 2px 10px rgba(250, 204, 21, 0.4);
+      margin: 4px 0 10px;
+    }
+
+    .score-adjust-btns {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .adj-btn {
+      padding: 4px 10px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      color: white;
+      transition: all 0.15s;
+    }
+
+    .adj-btn.plus {
+      background: rgba(34, 197, 94, 0.25);
+      border-color: #4ade80;
+    }
+    .adj-btn.plus:hover { background: #22c55e; }
+
+    .adj-btn.minus {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: #f87171;
+    }
+    .adj-btn.minus:hover { background: #ef4444; }
+
+    /* HERNÍ PLÁN 5x5 */
+    .board-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      padding-bottom: 12px;
+    }
+
+    .jeopardy-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(165px, 1fr));
+      gap: clamp(10px, 1.5vw, 16px);
+      background: rgba(5, 8, 28, 0.75);
+      padding: clamp(12px, 2vw, 20px);
+      border: 4px solid var(--gold);
+      border-radius: 24px;
+      box-shadow: var(--shadow-box), var(--shadow-gold);
+      min-width: 860px;
+    }
+
+    .category-header {
+      background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+      border: 3px solid var(--gold);
+      border-radius: 16px;
+      padding: 14px 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 110px;
+      box-shadow: inset 0 0 15px rgba(250, 204, 21, 0.2);
+    }
+
+    .cat-icon {
+      font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+      margin-bottom: 4px;
+    }
+
+    .cat-title-en {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      line-height: 1.15;
+    }
+
+    .cat-title-cz {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+
+    .brick {
+      background: var(--card-blue);
+      border: 3px solid #60a5fa;
+      border-radius: 16px;
+      min-height: clamp(85px, 11vh, 115px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.15);
+      user-select: none;
+    }
+
+    .brick:hover:not(.played) {
+      background: var(--card-blue-hover);
+      border-color: var(--gold);
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 10px 25px rgba(250, 204, 21, 0.45);
+    }
+
+    .brick-points {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(2rem, 3.8vw, 3.2rem);
+      font-weight: 700;
+      color: var(--gold);
+      text-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
+      line-height: 1;
+    }
+
+    .brick.mega-bonus:not(.played) {
+      background: linear-gradient(145deg, #7c2d12 0%, #451a03 50%, #1e1b4b 100%);
+      border-color: #fb923c;
+    }
+
+    .brick.mega-bonus:hover:not(.played) {
+      border-color: var(--gold);
+      box-shadow: 0 0 28px rgba(249, 115, 22, 0.8);
+    }
+
+    .mega-badge {
+      margin-top: 6px;
+      background: linear-gradient(90deg, #f97316, #ef4444);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 900;
+      padding: 2px 9px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      animation: pulseBadge 1.4s infinite;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    @keyframes pulseBadge {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .brick.played {
+      background: rgba(15, 23, 42, 0.65);
+      border-color: #334155;
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.55;
+    }
+
+    .brick.played .brick-points {
+      color: #475569;
+      text-decoration: line-through;
+      text-shadow: none;
+    }
+
+    .brick.played .mega-badge {
+      display: none;
+    }
+
+    /* ==========================================
+       FÁZE 3: MODAL S OTÁZKOU & STEAL MECHANIKA
+       ========================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 6, 23, 0.92);
+      backdrop-filter: blur(10px);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .question-modal {
+      background: radial-gradient(circle at top, #1e3a8a 0%, #090f2c 100%);
+      border: 4px solid var(--gold);
+      border-radius: 28px;
+      width: 100%;
+      max-width: 1020px;
+      padding: clamp(20px, 3.5vw, 38px);
+      box-shadow: 0 0 50px rgba(250, 204, 21, 0.5);
+      margin: auto;
+      position: relative;
+      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(250, 204, 21, 0.35);
+      margin-bottom: 20px;
+    }
+
+    .modal-cat-badge {
+      background: rgba(6, 11, 38, 0.8);
+      border: 2px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      padding: 8px 18px;
+      border-radius: 14px;
+    }
+
+    .modal-team-turn {
+      background: var(--gold-grad);
+      color: #060b26;
+      font-weight: 900;
+      font-size: clamp(1rem, 1.8vw, 1.35rem);
+      padding: 8px 18px;
+      border-radius: 14px;
+      box-shadow: var(--shadow-gold);
+    }
+
+    .modal-team-turn.steal-mode {
+      background: linear-gradient(135deg, #f97316, #dc2626);
+      color: white;
+      border: 2px solid #fed7aa;
+      animation: pulseBadge 1s infinite;
+    }
+
+    .question-box {
+      background: rgba(6, 11, 38, 0.7);
+      border: 3px solid rgba(147, 197, 253, 0.4);
+      border-radius: 22px;
+      padding: clamp(24px, 4vw, 44px) clamp(18px, 3vw, 32px);
+      text-align: center;
+      margin-bottom: 22px;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+    }
+
+    .question-text {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(1.5rem, 3.2vw, 2.45rem);
+      line-height: 1.35;
+      color: #ffffff;
+      margin-bottom: 22px;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.6);
+    }
+
+    .tts-btn {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      border: 2px solid #ddd6fe;
+      font-size: 1.05rem;
+      padding: 10px 22px;
+      border-radius: 50px;
+    }
+
+    /* ČASOMÍRA */
+    .timer-section {
+      background: rgba(6, 11, 38, 0.8);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      padding: 16px 20px;
+      margin-bottom: 22px;
+    }
+
+    .timer-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .timer-digits {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .timer-digits.urgent {
+      color: #ef4444;
+      animation: pulseUrgent 0.5s infinite;
+    }
+
+    @keyframes pulseUrgent {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .timer-bar-track {
+      width: 100%;
+      height: 18px;
+      background: #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+
+    .timer-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #22c55e, #eab308);
+      transition: width 0.25s linear, background 0.3s ease;
+    }
+
+    .timer-bar-fill.urgent {
+      background: linear-gradient(90deg, #ef4444, #f97316);
+    }
+
+    /* ODPOVĚĎ */
+    .answer-reveal-box {
+      background: linear-gradient(135deg, rgba(21, 128, 61, 0.35), rgba(6, 78, 59, 0.7));
+      border: 3px solid #4ade80;
+      border-radius: 18px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 22px;
+      animation: popIn 0.25s ease;
+    }
+
+    .answer-label {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #86efac;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .answer-text {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(1.35rem, 2.5vw, 2rem);
+      color: #ffffff;
+    }
+
+    /* AKČNÍ TLAČÍTKA V MODALU */
+    .eval-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .eval-btn {
+      padding: 18px 20px;
+      font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+      border-radius: 16px;
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    .steal-teams-box {
+      background: rgba(154, 52, 18, 0.3);
+      border: 3px dashed #fb923c;
+      border-radius: 18px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .steal-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+      color: #fed7aa;
+      margin-bottom: 14px;
+    }
+
+    .steal-buttons-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .modal-Secondary-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+
+    /* ==========================================
+       FÁZE 4: VÍTĚZNÁ OBRAZOVKA (WINNING SCREEN)
+       ========================================== */
+    .winner-card {
+      background: rgba(15, 23, 62, 0.92);
+      border: 4px solid var(--gold);
+      border-radius: 28px;
+      padding: clamp(24px, 4vw, 44px);
+      text-align: center;
+      box-shadow: var(--shadow-box), var(--shadow-gold);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .podium-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+      align-items: end;
+    }
+
+    .podium-item {
+      background: linear-gradient(180deg, #1e3a8a 0%, #0f172a 100%);
+      border: 3px solid #60a5fa;
+      border-radius: 20px;
+      padding: 24px 16px;
+      box-shadow: var(--shadow-box);
+    }
+
+    .podium-item.rank-1 {
+      background: linear-gradient(180deg, #854d0e 0%, #422006 100%);
+      border: 4px solid var(--gold);
+      box-shadow: 0 0 35px rgba(250, 204, 21, 0.6);
+      transform: scale(1.05);
+    }
+
+    .podium-medal {
+      font-size: 3.4rem;
+      margin-bottom: 8px;
+    }
+
+    .podium-name {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.6rem;
+      color: white;
+      margin-bottom: 6px;
+    }
+
+    .podium-score {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 2.2rem;
+      color: var(--gold);
+    }
+
+    .review-section {
+      margin-top: 40px;
+      text-align: left;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .review-card {
+      background: rgba(6, 11, 38, 0.75);
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .review-card-head {
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .review-q {
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #f1f5f9;
+    }
+
+    .review-a {
+      color: #4ade80;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    /* KONFETY */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 400;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas" class="hidden"></canvas>
+
+  <!-- HORNÍ TELEVIZNÍ LIŠTA -->
+  <header class="top-bar">
+    <div class="logo-wrap">
+      <div class="logo-badge">📺 RISKUJ!</div>
+      <div class="logo-sub">The Jeopardy Board • 8.–9. třída ZŠ (A2/B1)</div>
+    </div>
+    <div class="top-controls">
+      <button id="sound-toggle-btn" class="btn btn-outline" onclick="toggleSound()">
+        🔊 Zvuky: ZAP
+      </button>
+      <button id="finish-early-btn" class="btn btn-gold hidden" onclick="showWinnerScreen()">
+        🏆 Ukončit hru a vyhlásit vítěze
+      </button>
+      <button id="back-lobby-btn" class="btn btn-outline hidden" onclick="goToLobby()">
+        🔄 Nová hra / Zpět do Lobby
+      </button>
+      <button class="btn btn-danger" onclick="confirmFullReset()">
+        🗑️ Resetovat hru
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ==========================================
+         FÁZE 1: ÚVODNÍ LOBBY PŘED STARTEM HRY
+         ========================================== -->
+    <section id="lobby-screen" class="lobby-card">
+      <div class="lobby-header">
+        <h1 class="lobby-title">⚡ TELEVIZNÍ STUDIO RISKUJ! ⚡</h1>
+        <p class="lobby-subtitle">Vědomostní soutěž v angličtině pro žáky 8. a 9. třídy ZŠ</p>
+      </div>
+
+      <!-- Nastavení počtu a jmen týmů -->
+      <div class="lobby-section">
+        <div class="lobby-section-title">
+          <span>👥 1. Nastavení soutěžních týmů (2 až 6 týmů)</span>
+          <button class="btn btn-blue" onclick="generateFunnyTeamNames()">
+            🎲 Vymyslet cool anglická jména týmů
+          </button>
+        </div>
+
+        <div class="preset-buttons">
+          <button class="btn btn-outline" onclick="setTeamCountPreset(2)">⚡ 2 Týmy (Tým A vs. Tým B)</button>
+          <button class="btn btn-outline" onclick="setTeamCountPreset(3)">⚡ 3 Týmy</button>
+          <button class="btn btn-outline" onclick="setTeamCountPreset(4)">⚡ 4 Skupiny</button>
+          <button class="btn btn-green" onclick="addTeamInput()" id="add-team-btn">+ Přidat tým</button>
+        </div>
+
+        <div id="teams-inputs-container" class="teams-inputs-grid"></div>
+      </div>
+
+      <!-- Volba délky časovače -->
+      <div class="lobby-section">
+        <div class="lobby-section-title">
+          <span>⏱️ 2. Časový limit na odpověď</span>
+        </div>
+        <div class="timer-options" id="timer-options-wrap">
+          <button class="timer-option-btn" onclick="selectTimerDuration(10)">10 vteřin (Svižné)</button>
+          <button class="timer-option-btn active" onclick="selectTimerDuration(15)">15 vteřin (Doporučeno)</button>
+          <button class="timer-option-btn" onclick="selectTimerDuration(20)">20 vteřin (Na rozmyšlenou)</button>
+          <button class="timer-option-btn" onclick="selectTimerDuration(30)">30 vteřin (Dlouhé věty)</button>
+        </div>
+      </div>
+
+      <!-- Pravidla hry pro žáky -->
+      <div class="lobby-section">
+        <div class="lobby-section-title">
+          <span>📜 3. Pravidla televizního studia</span>
+        </div>
+        <ul class="rules-list">
+          <li>👉 <strong>Výběr cihličky:</strong> Tým na tahu si anglicky vybere kategorii a hodnotu (např. <em>"Grammar Traps for 300, please!"</em>).</li>
+          <li>💰 <strong>Body 100 až 500:</strong> Čím vyšší hodnota, tím těžší gramatika, překlad nebo chyták! Řádek za 500 bodů je <strong>🔥 MEGA BONUS</strong>.</li>
+          <li>⚡ <strong>STEAL mechanika:</strong> Pokud tým odpoví špatně nebo vyprší čas, má 10 vteřin na přebrání otázky jiný tým!</li>
+          <li>🏆 <strong>Vítězství:</strong> Po odehrání všech 25 políček vyhrává tým s nejvyšším skóre!</li>
+        </ul>
+      </div>
+
+      <button class="btn btn-gold start-studio-btn" onclick="startGameFromLobby()">
+        📺 SPUSTIT TELEVIZNÍ STUDIO RISKUJ!
+      </button>
+    </section>
+
+
+    <!-- ==========================================
+         FÁZE 2: HLAVNÍ HERNÍ OBRAZOVKA (SKÓRE & 5x5)
+         ========================================== -->
+    <section id="game-screen" class="hidden">
+      <!-- Horní panel týmů -->
+      <div class="scoreboard-wrap">
+        <div id="scoreboard-container" class="scoreboard-grid"></div>
+      </div>
+
+      <!-- Mřížka 5x5 -->
+      <div class="board-wrapper">
+        <div id="jeopardy-board" class="jeopardy-grid"></div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================
+         FÁZE 4: VÍTĚZNÁ OBRAZOVKA (WINNING SCREEN)
+         ========================================== -->
+    <section id="winner-screen" class="winner-card hidden">
+      <h1 class="lobby-title">🏆 VELKÉ FINÁLE SOUTĚŽE RISKUJ! 🏆</h1>
+      <p class="lobby-subtitle">Skvělá práce! Tady jsou konečné výsledky dnešního studia:</p>
+
+      <div id="podium-container" class="podium-grid"></div>
+
+      <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px;">
+        <button class="btn btn-gold" style="font-size:1.2rem; padding:14px 28px;" onclick="playAgainSameTeams()">
+          🔄 Hrát znovu se stejnými týmy
+        </button>
+        <button class="btn btn-outline" style="font-size:1.2rem; padding:14px 28px;" onclick="goToLobby()">
+          ⚙️ Zpět do Lobby (Změnit týmy)
+        </button>
+      </div>
+
+      <!-- Přehled všech 25 otázek pro rychlé zopakování -->
+      <div class="review-section">
+        <h2 class="tv-font" style="color:var(--gold); font-size:1.6rem;">📚 Přehled všech 25 otázek a odpovědí na zopakování:</h2>
+        <div id="review-questions-container" class="review-grid"></div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ==========================================
+       FÁZE 3: MODAL S OTÁZKOU A STEAL MECHANIKOU
+       ========================================== -->
+  <div id="question-modal-overlay" class="modal-overlay hidden">
+    <div class="question-modal">
+      <div class="modal-top-bar">
+        <div id="modal-cat-info" class="modal-cat-badge">🧠 GRAMMAR TRAPS – 300 POINTS</div>
+        <div id="modal-turn-info" class="modal-team-turn">👉 Odpovídá: Grammar Rebels</div>
+      </div>
+
+      <div class="question-box">
+        <div id="modal-question-text" class="question-text">
+          Question text here
+        </div>
+        <button class="btn tts-btn" onclick="speakCurrentQuestion()">
+          🔊 Přečíst anglické zadání nahlas
+        </button>
+      </div>
+
+      <!-- Grafická a zvuková časomíra -->
+      <div class="timer-section">
+        <div class="timer-header">
+          <div id="modal-timer-digits" class="timer-digits">⏱️ 15 s</div>
+          <div style="display:flex; gap:10px;">
+            <button id="pause-timer-btn" class="btn btn-outline" onclick="togglePauseTimer()">⏸️ Pauza</button>
+            <button class="btn btn-outline" onclick="resetModalTimer()">🔄 Reset času</button>
+          </div>
+        </div>
+        <div class="timer-bar-track">
+          <div id="modal-timer-bar" class="timer-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- Skrytá správná odpověď -->
+      <div id="modal-answer-box" class="answer-reveal-box hidden">
+        <div class="answer-label">✅ Správná odpověď:</div>
+        <div id="modal-answer-text" class="answer-text">Answer here</div>
+      </div>
+
+      <!-- Hlavní tlačítka pro aktivní tým -->
+      <div id="primary-eval-box" class="eval-actions">
+        <button id="btn-correct-main" class="btn btn-green eval-btn" onclick="handleMainTeamCorrect()">
+          ✅ SPRÁVNĚ! (+300 bodů)
+        </button>
+        <button id="btn-wrong-main" class="btn btn-danger eval-btn" onclick="handleMainTeamWrong()">
+          ❌ ŠPATNĚ / NEVÍ (Přenechat šanci dalšímu týmu!)
+        </button>
+      </div>
+
+      <!-- STEAL REŽIM – šance pro ostatní týmy -->
+      <div id="steal-eval-box" class="steal-teams-box hidden">
+        <div class="steal-title">⚡ ŠANCE PRO DRUHÝ TÝM (STEAL)! Kdo odpověděl správně?</div>
+        <div id="steal-teams-buttons" class="steal-buttons-grid"></div>
+      </div>
+
+      <!-- Spodní lišta modalu -->
+      <div class="modal-Secondary-actions">
+        <button id="show-answer-btn" class="btn btn-blue" onclick="revealAnswerOnly()">
+          👁️ Rovnou ukázat správnou odpověď
+        </button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-outline" onclick="closeQuestionAsPlayedNoPoints()">
+            ⏭️ Nikdo nevěděl (Označit jako odehrané a pokračovat)
+          </button>
+          <button class="btn btn-outline" onclick="cancelQuestionModal()">
+            ✖️ Zavřít (Nechat cihličku neodehranou)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    /* ==========================================================
+       1. PŘEDVYPLNĚNÁ DATABÁZE 25 OTÁZEK PRO 8.–9. TŘÍDU (A2/B1)
+       ========================================================== */
+    const CATEGORIES = [
+      {
+        id: "grammar",
+        icon: "🧠",
+        titleEn: "GRAMMAR TRAPS",
+        titleCz: "Gramatické chytáky",
+        questions: [
+          {
+            points: 100,
+            q: "Řekni všechny 3 tvary (infinitive, past simple, past participle) nepravidelného slovesa 'BUY' (koupit).",
+            tts: "Say all three forms of the irregular verb BUY.",
+            a: "buy – bought – bought"
+          },
+          {
+            points: 200,
+            q: "Doplň správný tvar slovesa (Past Continuous vs. Past Simple): 'While I ________ (walk) home, it suddenly ________ (start) to rain.'",
+            tts: "While I blank home, it suddenly blank to rain.",
+            a: "While I WAS WALKING home, it suddenly STARTED to rain."
+          },
+          {
+            points: 300,
+            q: "Najdi a oprav gramatickou chybu ve větě: 'I have seen that movie yesterday evening.'",
+            tts: "Find and fix the grammar mistake: I have seen that movie yesterday evening.",
+            a: "I SAW that movie yesterday evening. (S určeným časem v minulosti 'yesterday' musí být Past Simple, ne Present Perfect!)."
+          },
+          {
+            points: 400,
+            q: "Doplň 1. kondicionál (First Conditional): 'If she ________ (not hurry), she ________ (miss) the train.'",
+            tts: "Complete the first conditional: If she not hurry, she miss the train.",
+            a: "If she DOESN'T HURRY, she WILL MISS the train. (Po 'if' nesmí být 'will'!)."
+          },
+          {
+            points: 500,
+            q: "🔥 MEGA BONUS: Převeď větu do trpného rodu (Passive Voice): 'J. K. Rowling wrote the Harry Potter books.'",
+            tts: "Transform into the passive voice: J. K. Rowling wrote the Harry Potter books.",
+            a: "The Harry Potter books WERE WRITTEN by J. K. Rowling."
+          }
+        ]
+      },
+      {
+        id: "translate",
+        icon: "🇬🇧",
+        titleEn: "TRANSLATE IT",
+        titleCz: "Překlad v praxi",
+        questions: [
+          {
+            points: 100,
+            q: "Přelož do angličtiny: 'Záleží to na počasí.' (Nápověda: použij sloveso 'depend' se správnou předložkou).",
+            tts: "Translate into English: It depends on the weather.",
+            a: "It depends ON the weather."
+          },
+          {
+            points: 200,
+            q: "Přelož do angličtiny: 'Těším se na letní prázdniny.' (Použij vazbu 'look forward to...').",
+            tts: "Translate into English using look forward to.",
+            a: "I am looking forward to the summer holidays. (Nebo: I look forward to...)."
+          },
+          {
+            points: 300,
+            q: "Přelož do angličtiny (Present Perfect): 'Už jsi někdy byl v Londýně?'",
+            tts: "Translate into English using Present Perfect.",
+            a: "Have you ever been to London?"
+          },
+          {
+            points: 400,
+            q: "Přelož do angličtiny: 'Bydlíme v tomto domě už deset let.' (Děj začal v minulosti a stále trvá!).",
+            tts: "Translate into English: We have lived in this house for ten years.",
+            a: "We HAVE LIVED (nebo HAVE BEEN LIVING) in this house FOR ten years."
+          },
+          {
+            points: 500,
+            q: "🔥 MEGA BONUS: Přelož souvětí (2. kondicionál): 'Kdybych měl milion dolarů, cestoval bych kolem světa.'",
+            tts: "Translate using the second conditional.",
+            a: "If I HAD a million dollars, I WOULD TRAVEL around the world."
+          }
+        ]
+      },
+      {
+        id: "phrasals",
+        icon: "💬",
+        titleEn: "PHRASALS & IDIOMS",
+        titleCz: "Fráze, slang a idiomy",
+        questions: [
+          {
+            points: 100,
+            q: "Co znamená frázové sloveso 'GIVE UP'? (Např. 'Never give up!')",
+            tts: "What does the phrasal verb GIVE UP mean? Never give up!",
+            a: "Vzdát se / přestat se snažit."
+          },
+          {
+            points: 200,
+            q: "Jaký je rozdíl mezi 'LOOK FOR' a 'LOOK AFTER'?",
+            tts: "What is the difference between LOOK FOR and LOOK AFTER?",
+            a: "LOOK FOR = hledat něco | LOOK AFTER = starat se o někoho / hlídat."
+          },
+          {
+            points: 300,
+            q: "Co v běžné řeči znamená idiom: 'The test was a piece of cake!'?",
+            tts: "What does the idiom mean: The test was a piece of cake!",
+            a: "Byla to hračka / brnkačka (velmi snadné)."
+          },
+          {
+            points: 400,
+            q: "Které frázové sloveso znamená 'dojíti / spotřebovat zásoby'? (Např. 'We have ________ of milk, I need to buy some.')",
+            tts: "We have blank of milk, I need to buy some.",
+            a: "RUN OUT OF (We have run out of milk)."
+          },
+          {
+            points: 500,
+            q: "🔥 MEGA BONUS: Co znamená anglický idiom 'To feel under the weather'?",
+            tts: "What does the English idiom To feel under the weather mean?",
+            a: "Necítit se dobře / být trochu nemocný, nachlazený nebo bez energie."
+          }
+        ]
+      },
+      {
+        id: "culture",
+        icon: "🌍",
+        titleEn: "ENGLISH WORLD",
+        titleCz: "Reálie a kultura",
+        questions: [
+          {
+            points: 100,
+            q: "Jak se jmenuje současný král Spojeného království (UK) a jak se jmenuje jeho oficiální londýnské sídlo?",
+            tts: "What is the name of the current King of the United Kingdom and his official London residence?",
+            a: "King Charles III (Král Karel III.) & Buckingham Palace."
+          },
+          {
+            points: 200,
+            q: "Jaké je hlavní město USA (pozor, není to New York!) a ve kterém městě stojí Socha Svobody?",
+            tts: "What is the capital city of the USA, and in which city is the Statue of Liberty?",
+            a: "Hlavní město: Washington, D.C. | Socha Svobody: New York City."
+          },
+          {
+            points: 300,
+            q: "Jak se v britské vs. americké angličtině řekne: 1) VÝTAH a 2) HRANOLKY?",
+            tts: "How do you say elevator and fries in British versus American English?",
+            a: "1) UK: lift / US: elevator | 2) UK: chips / US: French fries."
+          },
+          {
+            points: 400,
+            q: "Vyjmenuj VŠECHNY 4 země, které tvoří Spojené království (The United Kingdom).",
+            tts: "Name all four countries that make up the United Kingdom.",
+            a: "England (Anglie), Scotland (Skotsko), Wales, Northern Ireland (Severní Irsko)."
+          },
+          {
+            points: 500,
+            q: "🔥 MEGA BONUS: Jaké je hlavní město Austrálie? (Pozor, chyták – není to Sydney ani Melbourne!).",
+            tts: "What is the capital city of Australia? Careful, it is not Sydney or Melbourne!",
+            a: "Canberra."
+          }
+        ]
+      },
+      {
+        id: "mystery",
+        icon: "🎲",
+        titleEn: "MYSTERY & ACTION",
+        titleCz: "Zákeřný mix a výzvy",
+        questions: [
+          {
+            points: 100,
+            q: "FALSE FRIENDS (Zrádná slova): Co doopravdy v angličtině znamená slovo 'ACTUALLY'? (Pozor, neznamená to 'aktuálně'!).",
+            tts: "What does the word ACTUALLY really mean in English?",
+            a: "Ve skutečnosti / vlastně / popravdě (aktuálně = currently)."
+          },
+          {
+            points: 200,
+            q: "WORD FORMATION: Vytvoř podstatné jméno (noun) a záporné přídavné jméno (negative adjective) od slova 'HAPPY'.",
+            tts: "Create a noun and a negative adjective from the word HAPPY.",
+            a: "Podstatné jméno: HAPPINESS (štěstí) | Záporné příd. jm.: UNHAPPY (nešťastný)."
+          },
+          {
+            points: 300,
+            q: "RIDDLE (Hádanka): 'What belongs to you, but other people use it much more than you do?'",
+            tts: "Riddle: What belongs to you, but other people use it much more than you do?",
+            a: "Your name! (Tvoje jméno)."
+          },
+          {
+            points: 400,
+            q: "SILENT LETTERS: Ve kterých slovech se NEČTE písmeno 'K' nebo 'B'? Přečti správně nahlas všechna 3 slova: KNIGHT, CLIMB, DOUBT.",
+            tts: "Pronounce these three words with silent letters correctly!",
+            a: "KNIGHT [najt] – rytíř, CLIMB [klajm] – šplhat, DOUBT [daut] – pochybovat."
+          },
+          {
+            points: 500,
+            q: "🗣️ SPEAKING CHALLENGE (500 b.): Vyberte jednoho člena týmu! Musí bez dlouhého zasekávání mluvit 15 vteřin anglicky (alespoň 4 souvislé věty) na téma: 'MY PERFECT WEEKEND'.",
+            tts: "Speaking challenge! Speak in English for fifteen seconds about: My perfect weekend!",
+            a: "Splněno, pokud žák plynule řekne alespoň 4 smysluplné anglické věty k tématu!"
+          }
+        ]
+      }
+    ];
+
+    const FUNNY_TEAM_NAMES = [
+      "Grammar Rebels ⚡", "Brainy Legends 🧠", "The Plot Twisters 🔥", "Fluent Vikings 🛡️",
+      "Slang Masters 😎", "Midnight Coders 💻", "London Calling ☎️", "Future CEOs 💼",
+      "Oxford Dropouts 🎓", "Tea Spillers ☕", "Syntax Ninjas 🥷", "Drama Royals 👑"
+    ];
+
+    const STORAGE_KEY = "riskuj_jeopardy_8_9_state_v1";
+
+    /* ==========================================================
+       2. STAV HRY A ULOŽIŠTĚ (localStorage)
+       ========================================================== */
+    let gameState = {
+      phase: "lobby", // "lobby" | "board" | "winner"
+      timerDuration: 15,
+      soundEnabled: true,
+      teams: [
+        { name: "Grammar Rebels ⚡", score: 0 },
+        { name: "Brainy Legends 🧠", score: 0 },
+        { name: "Slang Masters 😎", score: 0 }
+      ],
+      currentTeamIndex: 0,
+      playedBricks: {} // klíč např. "0-2" (catIdx-rowIdx): true
+    };
+
+    // Proměnné pro aktuálně otevřenou otázku
+    let activeQuestion = null; // { catIdx, rowIdx, points, q, tts, a, catTitle, catIcon }
+    let timerInterval = null;
+    let timeRemaining = 15;
+    let maxTimeCurrentModal = 15;
+    let isTimerPaused = false;
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+      } catch (e) {
+        console.warn("Ukládání do localStorage selhalo:", e);
+      }
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.teams) && parsed.teams.length >= 2) {
+            gameState = Object.assign(gameState, parsed);
+          }
+        }
+      } catch (e) {
+        console.warn("Načtení z localStorage selhalo:", e);
+      }
+    }
+
+    /* ==========================================================
+       3. WEB AUDIO API SYNTETIZOVANÉ TELEVIZNÍ ZVUKY
+       ========================================================== */
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, type, duration, delay = 0, vol = 0.15) {
+      if (!gameState.soundEnabled) return;
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+
+      gain.gain.setValueAtTime(vol, ctx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + duration);
+    }
+
+    function soundStudioIntro() {
+      const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
+      notes.forEach((n, i) => playTone(n, "triangle", 0.25, i * 0.09, 0.2));
+    }
+
+    function soundBrickOpen() {
+      playTone(440, "sine", 0.12, 0, 0.18);
+      playTone(659.25, "sine", 0.2, 0.08, 0.18);
+    }
+
+    function soundTick(urgent = false) {
+      playTone(urgent ? 880 : 520, "sine", 0.06, 0, urgent ? 0.18 : 0.08);
+    }
+
+    function soundCorrect() {
+      playTone(523.25, "triangle", 0.15, 0, 0.22);
+      playTone(659.25, "triangle", 0.15, 0.12, 0.22);
+      playTone(783.99, "triangle", 0.15, 0.24, 0.22);
+      playTone(1046.50, "triangle", 0.4, 0.36, 0.25);
+    }
+
+    function soundBuzzer() {
+      playTone(140, "sawtooth", 0.35, 0, 0.22);
+      playTone(115, "sawtooth", 0.45, 0.2, 0.25);
+    }
+
+    function soundFanfare() {
+      const melody = [
+        { f: 523.25, d: 0.18, t: 0 },
+        { f: 523.25, d: 0.18, t: 0.18 },
+        { f: 523.25, d: 0.18, t: 0.36 },
+        { f: 659.25, d: 0.4, t: 0.54 },
+        { f: 587.33, d: 0.25, t: 0.96 },
+        { f: 659.25, d: 0.25, t: 1.22 },
+        { f: 783.99, d: 0.6, t: 1.50 }
+      ];
+      melody.forEach(m => playTone(m.f, "triangle", m.d, m.t, 0.24));
+    }
+
+    function toggleSound() {
+      gameState.soundEnabled = !gameState.soundEnabled;
+      updateSoundButtonUI();
+      saveState();
+    }
+
+    function updateSoundButtonUI() {
+      const btn = document.getElementById("sound-toggle-btn");
+      btn.textContent = gameState.soundEnabled ? "🔊 Zvuky: ZAP" : "🔇 Zvuky: VYP";
+    }
+
+    /* ==========================================================
+       4. LOGIKA FÁZE 1: LOBBY
+       ========================================================== */
+    function renderLobby() {
+      const container = document.getElementById("teams-inputs-container");
+      container.innerHTML = "";
+
+      gameState.teams.forEach((team, idx) => {
+        const wrap = document.createElement("div");
+        wrap.className = "team-input-wrap";
+        wrap.innerHTML = `
+          <div class="team-badge-num">${idx + 1}</div>
+          <input type="text" class="team-input" value="${escapeHtml(team.name)}"
+                 placeholder="Název týmu ${idx + 1}"
+                 oninput="updateTeamNameInLobby(${idx}, this.value)">
+          ${gameState.teams.length > 2 ? `<button class="remove-team-btn" title="Odebrat tým" onclick="removeTeamInput(${idx})">✕</button>` : ""}
+        `;
+        container.appendChild(wrap);
+      });
+
+      document.getElementById("add-team-btn").disabled = gameState.teams.length >= 6;
+
+      // Časovač tlačítka
+      const timerBtns = document.querySelectorAll("#timer-options-wrap .timer-option-btn");
+      const durations = [10, 15, 20, 30];
+      timerBtns.forEach((b, i) => {
+        b.classList.toggle("active", durations[i] === gameState.timerDuration);
+      });
+    }
+
+    function updateTeamNameInLobby(idx, val) {
+      gameState.teams[idx].name = val;
+      saveState();
+    }
+
+    function setTeamCountPreset(count) {
+      const defaultNames = [
+        "Team A – Rebels ⚡",
+        "Team B – Legends 🧠",
+        "Team C – Vikings 🛡️",
+        "Team D – Ninjas 🥷",
+        "Team E – Royals 👑",
+        "Team F – Masters 😎"
+      ];
+      const newTeams = [];
+      for (let i = 0; i < count; i++) {
+        newTeams.push({
+          name: gameState.teams[i] ? gameState.teams[i].name : defaultNames[i],
+          score: 0
+        });
+      }
+      gameState.teams = newTeams;
+      saveState();
+      renderLobby();
+    }
+
+    function addTeamInput() {
+      if (gameState.teams.length >= 6) return;
+      const nextNum = gameState.teams.length + 1;
+      gameState.teams.push({ name: `Team ${nextNum} ⚡`, score: 0 });
+      saveState();
+      renderLobby();
+    }
+
+    function removeTeamInput(idx) {
+      if (gameState.teams.length <= 2) return;
+      gameState.teams.splice(idx, 1);
+      saveState();
+      renderLobby();
+    }
+
+    function generateFunnyTeamNames() {
+      const shuffled = [...FUNNY_TEAM_NAMES].sort(() => Math.random() - 0.5);
+      gameState.teams.forEach((t, i) => {
+        t.name = shuffled[i % shuffled.length];
+      });
+      playTone(587.33, "triangle", 0.15, 0, 0.15);
+      saveState();
+      renderLobby();
+    }
+
+    function selectTimerDuration(sec) {
+      gameState.timerDuration = sec;
+      saveState();
+      renderLobby();
+    }
+
+    function startGameFromLobby() {
+      gameState.teams.forEach((t, i) => {
+        if (!t.name || !t.name.trim()) {
+          t.name = `Tým ${i + 1}`;
+        }
+        t.score = 0;
+      });
+      gameState.currentTeamIndex = 0;
+      gameState.playedBricks = {};
+      gameState.phase = "board";
+      saveState();
+      soundStudioIntro();
+      switchScreen("board");
+    }
+
+    /* ==========================================================
+       5. LOGIKA FÁZE 2: SKÓRE BOARD & JEOPARDY TABULE 5x5
+       ========================================================== */
+    function renderScoreboard() {
+      const container = document.getElementById("scoreboard-container");
+      container.innerHTML = "";
+
+      gameState.teams.forEach((team, idx) => {
+        const isCurrent = idx === gameState.currentTeamIndex;
+        const card = document.createElement("div");
+        card.className = `team-card ${isCurrent ? "active-turn" : ""}`;
+        card.title = "Kliknutím přepnete tah na tento tým";
+        card.onclick = (e) => {
+          if (e.target.tagName.toLowerCase() === "button") return;
+          setTurnTeam(idx);
+        };
+
+        card.innerHTML = `
+          <div>
+            <div class="turn-indicator ${isCurrent ? "" : "inactive"}">
+              ${isCurrent ? "👑 👉 PRÁVĚ VYBÍRÁ OTÁZKU" : "Čeká na tah (klikni pro přepnutí)"}
+            </div>
+            <div class="team-name">${escapeHtml(team.name)}</div>
+          </div>
+          <div>
+            <div class="team-score">${team.score} b.</div>
+            <div class="score-adjust-btns">
+              <button class="adj-btn plus" onclick="adjustScore(${idx}, 100)">+100</button>
+              <button class="adj-btn minus" onclick="adjustScore(${idx}, -100)">-100</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function setTurnTeam(idx) {
+      gameState.currentTeamIndex = idx;
+      saveState();
+      renderScoreboard();
+    }
+
+    function adjustScore(idx, delta) {
+      gameState.teams[idx].score += delta;
+      playTone(delta > 0 ? 600 : 250, "sine", 0.1, 0, 0.12);
+      saveState();
+      renderScoreboard();
+    }
+
+    function renderJeopardyBoard() {
+      const board = document.getElementById("jeopardy-board");
+      board.innerHTML = "";
+
+      // 1. Řádek: Hlavičky 5 kategorií
+      CATEGORIES.forEach((cat) => {
+        const header = document.createElement("div");
+        header.className = "category-header";
+        header.innerHTML = `
+          <div class="cat-icon">${cat.icon}</div>
+          <div class="cat-title-en">${cat.titleEn}</div>
+          <div class="cat-title-cz">${cat.titleCz}</div>
+        `;
+        board.appendChild(header);
+      });
+
+      // 5 Řádků cihliček (hodnoty 100 až 500)
+      for (let rowIdx = 0; rowIdx < 5; rowIdx++) {
+        for (let catIdx = 0; catIdx < 5; catIdx++) {
+          const qObj = CATEGORIES[catIdx].questions[rowIdx];
+          const brickKey = `${catIdx}-${rowIdx}`;
+          const isPlayed = !!gameState.playedBricks[brickKey];
+          const isMega = qObj.points === 500;
+
+          const brick = document.createElement("div");
+          brick.className = `brick ${isMega ? "mega-bonus" : ""} ${isPlayed ? "played" : ""}`;
+
+          brick.innerHTML = `
+            <div class="brick-points">${qObj.points}</div>
+            ${isMega ? `<div class="mega-badge">🔥 MEGA BONUS</div>` : ""}
+          `;
+
+          if (!isPlayed) {
+            brick.onclick = () => openQuestionModal(catIdx, rowIdx);
+          }
+
+          board.appendChild(brick);
+        }
+      }
+    }
+
+    /* ==========================================================
+       6. LOGIKA FÁZE 3: DETAIL OTÁZKY, ČASOMÍRA & STEAL MECHANIKA
+       ========================================================== */
+    function openQuestionModal(catIdx, rowIdx) {
+      const cat = CATEGORIES[catIdx];
+      const qObj = cat.questions[rowIdx];
+      activeQuestion = {
+        catIdx,
+        rowIdx,
+        points: qObj.points,
+        q: qObj.q,
+        tts: qObj.tts,
+        a: qObj.a,
+        catTitle: cat.titleEn,
+        catIcon: cat.icon
+      };
+
+      soundBrickOpen();
+
+      const currentTeam = gameState.teams[gameState.currentTeamIndex];
+      document.getElementById("modal-cat-info").textContent = `${cat.icon} ${cat.titleEn} – ${qObj.points} POINTS`;
+
+      const turnBadge = document.getElementById("modal-turn-info");
+      turnBadge.className = "modal-team-turn";
+      turnBadge.textContent = `👉 Odpovídá: ${currentTeam.name}`;
+
+      document.getElementById("modal-question-text").textContent = qObj.q;
+      document.getElementById("modal-answer-text").textContent = qObj.a;
+      document.getElementById("modal-answer-box").classList.add("hidden");
+
+      document.getElementById("btn-correct-main").textContent = `✅ SPRÁVNĚ! (+${qObj.points} bodů pro ${currentTeam.name})`;
+      document.getElementById("primary-eval-box").classList.remove("hidden");
+      document.getElementById("steal-eval-box").classList.add("hidden");
+
+      document.getElementById("question-modal-overlay").classList.remove("hidden");
+
+      startModalTimer(gameState.timerDuration);
+    }
+
+    function startModalTimer(seconds) {
+      clearInterval(timerInterval);
+      maxTimeCurrentModal = seconds;
+      timeRemaining = seconds;
+      isTimerPaused = false;
+      document.getElementById("pause-timer-btn").textContent = "⏸️ Pauza";
+      updateTimerUI();
+
+      timerInterval = setInterval(() => {
+        if (isTimerPaused) return;
+        timeRemaining--;
+        if (timeRemaining > 0 && timeRemaining <= 5) {
+          soundTick(true);
+        } else if (timeRemaining > 5) {
+          soundTick(false);
+        }
+
+        updateTimerUI();
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          soundBuzzer();
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI() {
+      const digits = document.getElementById("modal-timer-digits");
+      const bar = document.getElementById("modal-timer-bar");
+
+      digits.textContent = `⏱️ ${Math.max(0, timeRemaining)} s`;
+      const pct = Math.max(0, (timeRemaining / maxTimeCurrentModal) * 100);
+      bar.style.width = `${pct}%`;
+
+      const isUrgent = timeRemaining <= 5;
+      digits.classList.toggle("urgent", isUrgent);
+      bar.classList.toggle("urgent", isUrgent);
+    }
+
+    function togglePauseTimer() {
+      isTimerPaused = !isTimerPaused;
+      document.getElementById("pause-timer-btn").textContent = isTimerPaused ? "▶️ Pokračovat" : "⏸️ Pauza";
+    }
+
+    function resetModalTimer() {
+      startModalTimer(maxTimeCurrentModal);
+    }
+
+    // Přečtení anglické části nahlas (Web Speech API)
+    function speakCurrentQuestion() {
+      if (!activeQuestion) return;
+      if (!("speechSynthesis" in window)) {
+        alert("Váš prohlížeč nepodporuje hlasové čtení (Web Speech API).");
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(activeQuestion.tts || activeQuestion.q);
+      utter.lang = "en-GB";
+      utter.rate = 0.95;
+      window.speechSynthesis.speak(utter);
+    }
+
+    // 1. Aktivní tým odpověděl SPRÁVNĚ
+    function handleMainTeamCorrect() {
+      if (!activeQuestion) return;
+      clearInterval(timerInterval);
+      soundCorrect();
+
+      document.getElementById("modal-answer-box").classList.remove("hidden");
+      gameState.teams[gameState.currentTeamIndex].score += activeQuestion.points;
+
+      finishBrickAndAdvanceTurn();
+    }
+
+    // 2. Aktivní tým odpověděl ŠPATNĚ -> přepnutí do STEAL režimu pro ostatní týmy
+    function handleMainTeamWrong() {
+      if (!activeQuestion) return;
+      soundBuzzer();
+
+      const turnBadge = document.getElementById("modal-turn-info");
+      turnBadge.className = "modal-team-turn steal-mode";
+      turnBadge.textContent = "⚡ ŠANCE PRO DRUHÝ TÝM (STEAL)!";
+
+      document.getElementById("primary-eval-box").classList.add("hidden");
+      const stealBox = document.getElementById("steal-eval-box");
+      stealBox.classList.remove("hidden");
+
+      const btnContainer = document.getElementById("steal-teams-buttons");
+      btnContainer.innerHTML = "";
+
+      gameState.teams.forEach((team, idx) => {
+        if (idx === gameState.currentTeamIndex) return;
+        const btn = document.createElement("button");
+        btn.className = "btn btn-green eval-btn";
+        btn.textContent = `✅ ${team.name} (+${activeQuestion.points} b.)`;
+        btn.onclick = () => handleStealTeamCorrect(idx);
+        btnContainer.appendChild(btn);
+      });
+
+      // Reset času na 10 vteřin pro zbytek třídy
+      startModalTimer(10);
+    }
+
+    // Druhý tým v režimu STEAL odpověděl správně
+    function handleStealTeamCorrect(stealTeamIdx) {
+      if (!activeQuestion) return;
+      clearInterval(timerInterval);
+      soundCorrect();
+
+      document.getElementById("modal-answer-box").classList.remove("hidden");
+      gameState.teams[stealTeamIdx].score += activeQuestion.points;
+
+      finishBrickAndAdvanceTurn();
+    }
+
+    function revealAnswerOnly() {
+      clearInterval(timerInterval);
+      document.getElementById("modal-answer-box").classList.remove("hidden");
+    }
+
+    function closeQuestionAsPlayedNoPoints() {
+      if (!activeQuestion) return;
+      clearInterval(timerInterval);
+      finishBrickAndAdvanceTurn();
+    }
+
+    function finishBrickAndAdvanceTurn() {
+      const key = `${activeQuestion.catIdx}-${activeQuestion.rowIdx}`;
+      gameState.playedBricks[key] = true;
+
+      // Posun tahu na další tým v pořadí
+      gameState.currentTeamIndex = (gameState.currentTeamIndex + 1) % gameState.teams.length;
+      saveState();
+
+      document.getElementById("primary-eval-box").classList.add("hidden");
+      document.getElementById("steal-eval-box").classList.add("hidden");
+
+      setTimeout(() => {
+        document.getElementById("question-modal-overlay").classList.add("hidden");
+        activeQuestion = null;
+        renderScoreboard();
+        renderJeopardyBoard();
+        checkIfAllBricksPlayed();
+      }, 1500);
+    }
+
+    function cancelQuestionModal() {
+      clearInterval(timerInterval);
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      document.getElementById("question-modal-overlay").classList.add("hidden");
+      activeQuestion = null;
+    }
+
+    function checkIfAllBricksPlayed() {
+      const playedCount = Object.keys(gameState.playedBricks).length;
+      if (playedCount >= 25) {
+        showWinnerScreen();
+      }
+    }
+
+    /* ==========================================================
+       7. FÁZE 4: VÍTĚZNÁ OBRAZOVKA & KONFETY
+       ========================================================== */
+    function showWinnerScreen() {
+      gameState.phase = "winner";
+      saveState();
+      switchScreen("winner");
+      soundFanfare();
+      startConfetti();
+      renderWinnerPodium();
+      renderReviewQuestions();
+    }
+
+    function renderWinnerPodium() {
+      const container = document.getElementById("podium-container");
+      container.innerHTML = "";
+
+      const sortedTeams = [...gameState.teams].sort((a, b) => b.score - a.score);
+      const medals = ["🥇 1. MÍSTO", "🥈 2. MÍSTO", "🥉 3. MÍSTO", "🏅 4. MÍSTO", "🏅 5. MÍSTO", "🏅 6. MÍSTO"];
+
+      sortedTeams.forEach((team, idx) => {
+        const card = document.createElement("div");
+        card.className = `podium-item ${idx === 0 ? "rank-1" : ""}`;
+        card.innerHTML = `
+          <div class="podium-medal">${medals[idx] || "🏅"}</div>
+          <div class="podium-name">${escapeHtml(team.name)}</div>
+          <div class="podium-score">${team.score} bodů</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderReviewQuestions() {
+      const container = document.getElementById("review-questions-container");
+      container.innerHTML = "";
+
+      CATEGORIES.forEach((cat) => {
+        cat.questions.forEach((qObj) => {
+          const item = document.createElement("div");
+          item.className = "review-card";
+          item.innerHTML = `
+            <div class="review-card-head">${cat.icon} ${cat.titleEn} – ${qObj.points} b.</div>
+            <div class="review-q">${escapeHtml(qObj.q)}</div>
+            <div class="review-a">✓ ${escapeHtml(qObj.a)}</div>
+          `;
+          container.appendChild(item);
+        });
+      });
+    }
+
+    function playAgainSameTeams() {
+      stopConfetti();
+      gameState.teams.forEach(t => t.score = 0);
+      gameState.playedBricks = {};
+      gameState.currentTeamIndex = 0;
+      gameState.phase = "board";
+      saveState();
+      soundStudioIntro();
+      switchScreen("board");
+    }
+
+    /* ==========================================================
+       8. PŘEPÍNÁNÍ OBRAZOVEK A RESET
+       ========================================================== */
+    function switchScreen(phase) {
+      gameState.phase = phase;
+      document.getElementById("lobby-screen").classList.toggle("hidden", phase !== "lobby");
+      document.getElementById("game-screen").classList.toggle("hidden", phase !== "board");
+      document.getElementById("winner-screen").classList.toggle("hidden", phase !== "winner");
+
+      document.getElementById("finish-early-btn").classList.toggle("hidden", phase !== "board");
+      document.getElementById("back-lobby-btn").classList.toggle("hidden", phase === "lobby");
+
+      if (phase === "lobby") {
+        stopConfetti();
+        renderLobby();
+      } else if (phase === "board") {
+        stopConfetti();
+        renderScoreboard();
+        renderJeopardyBoard();
+      } else if (phase === "winner") {
+        renderWinnerPodium();
+        renderReviewQuestions();
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function goToLobby() {
+      stopConfetti();
+      gameState.phase = "lobby";
+      saveState();
+      switchScreen("lobby");
+    }
+
+    function confirmFullReset() {
+      if (confirm("Opravdu chcete kompletně vynulovat hru a vymazat uložený stav?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        stopConfetti();
+        gameState = {
+          phase: "lobby",
+          timerDuration: 15,
+          soundEnabled: true,
+          teams: [
+            { name: "Grammar Rebels ⚡", score: 0 },
+            { name: "Brainy Legends 🧠", score: 0 },
+            { name: "Slang Masters 😎", score: 0 }
+          ],
+          currentTeamIndex: 0,
+          playedBricks: {}
+        };
+        saveState();
+        updateSoundButtonUI();
+        switchScreen("lobby");
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    /* ==========================================================
+       9. ZLATÉ KONFETY NA VÍTĚZNOU OBRAZOVKU
+       ========================================================== */
+    let confettiAnimId = null;
+    let confettiParticles = [];
+
+    function startConfetti() {
+      const canvas = document.getElementById("confetti-canvas");
+      canvas.classList.remove("hidden");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ["#facc15", "#fde047", "#f97316", "#3b82f6", "#22c55e", "#ec4899"];
+      confettiParticles = Array.from({ length: 110 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        w: Math.random() * 10 + 6,
+        h: Math.random() * 6 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vy: Math.random() * 3 + 2,
+        vx: Math.random() * 2 - 1,
+        angle: Math.random() * 360,
+        spin: Math.random() * 6 - 3
+      }));
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confettiParticles.forEach(p => {
+          p.y += p.vy;
+          p.x += p.vx;
+          p.angle += p.spin;
+          if (p.y > canvas.height) {
+            p.y = -20;
+            p.x = Math.random() * canvas.width;
+          }
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.angle * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        confettiAnimId = requestAnimationFrame(draw);
+      }
+      cancelAnimationFrame(confettiAnimId);
+      draw();
+    }
+
+    function stopConfetti() {
+      cancelAnimationFrame(confettiAnimId);
+      const canvas = document.getElementById("confetti-canvas");
+      if (canvas) canvas.classList.add("hidden");
+    }
+
+    window.addEventListener("resize", () => {
+      const canvas = document.getElementById("confetti-canvas");
+      if (canvas && !canvas.classList.contains("hidden")) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    });
+
+    /* ==========================================================
+       INITIALIZACE PŘI NAČTENÍ STRÁNKY
+       ========================================================== */
+    window.addEventListener("DOMContentLoaded", () => {
+      loadState();
+      updateSoundButtonUI();
+      switchScreen(gameState.phase || "lobby");
+    });
+  </script>
+</body>
+</html>
